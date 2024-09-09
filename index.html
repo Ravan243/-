@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Сервисы</title>
+    <style>
+        body {
+            background: url('https://your-image-url.com/modern-house.jpg') no-repeat center center fixed;
+            background-size: cover;
+            font-family: Arial, sans-serif;
+            color: #fff;
+        }
+        .service-list, #cart-list, #order-form {
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px;
+        }
+        .service {
+            margin-bottom: 15px;
+        }
+        .cart-button, .order-button, #submit-order, #cancel-order {
+            border: none;
+            color: #fff;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 5px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+        .cart-button {
+            background-color: #007bff;
+        }
+        .cart-button:hover {
+            background-color: #0056b3;
+            transform: scale(1.05);
+        }
+        .cart-button:active {
+            transform: scale(0.95);
+        }
+        .order-button {
+            background-color: #28a745;
+        }
+        .order-button:hover {
+            background-color: #218838;
+            transform: scale(1.05);
+        }
+        .order-button:active {
+            transform: scale(0.95);
+        }
+        #submit-order {
+            background-color: #007bff;
+            padding: 20px 40px;
+            font-size: 22px;
+            display: block;
+            width: 100%;
+        }
+        #submit-order:hover {
+            background-color: #0056b3;
+            transform: scale(1.1);
+        }
+        #submit-order:active {
+            transform: scale(0.95);
+        }
+        #cancel-order {
+            background-color: #dc3545;
+            padding: 6px 12px;
+            font-size: 12px;
+        }
+        #cancel-order:hover {
+            background-color: #c82333;
+            transform: scale(1.05);
+        }
+        #cancel-order:active {
+            transform: scale(0.9);
+        }
+        #cart-list {
+            position: relative;
+        }
+        #total {
+            font-size: 18px;
+            margin-top: 10px;
+        }
+        #order-form {
+            margin-top: 20px;
+        }
+        #order-form label {
+            display: block;
+            margin-bottom: 10px;
+        }
+        #order-form input {
+            padding: 10px;
+            font-size: 16px;
+            width: calc(100% - 22px);
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="service-list">
+    <div class="service">
+        <h3>3D Визуализация</h3>
+        <p>Создание фотореалистичных 3D-моделей вашего проекта.(Не больше 6 комнат)</p>
+        <p>Стоимость: $40</p>
+        <button class="cart-button" data-price="40">Добавить в корзину</button>
+    </div>
+    <div class="service">
+        <h3>Дизайн Интерьера</h3>
+        <p>Проектирование стильных и функциональных интерьеров под ваши нужды.(1 комната)</p>
+        <p>Стоимость: $15</p>
+        <button class="cart-button" data-price="15">Добавить в корзину</button>
+    </div>
+    <div class="service">
+        <h3>Разработка 3D Чертежей</h3>
+        <p>3D планы с верху.(смотря на размер)</p>
+        <p>Стоимость: $30</p>
+        <button class="cart-button" data-price="30">Добавить в корзину</button>
+    </div>
+</div>
+
+<div id="cart-list" style="display:none;">
+    <h3>Список покупок:</h3>
+    <ul id="cart-items"></ul>
+    <div id="total">Итог: $0</div>
+    <button id="place-order" class="order-button">Оформить заказ</button>
+    <button id="cancel-order">Отменить заказ</button>
+</div>
+
+<div id="order-form" style="display:none;">
+    <h3>Оформление заказа</h3>
+    <label for="email">Введите ваш Gmail:</label>
+    <input type="email" id="email" required>
+    <button id="submit-order">Отправить заказ</button>
+</div>
+
+<script>
+    let cartItems = [];
+    let totalPrice = 0;
+
+    document.querySelectorAll('.cart-button').forEach(button => {
+        button.addEventListener('click', function() {
+            const serviceName = this.previousElementSibling.previousElementSibling.textContent;
+            const servicePrice = parseFloat(this.getAttribute('data-price'));
+            if (!cartItems.some(item => item.name === serviceName)) {
+                cartItems.push({ name: serviceName, price: servicePrice });
+                totalPrice += servicePrice;
+                updateCart();
+            }
+        });
+    });
+
+    function updateCart() {
+        const cartList = document.getElementById('cart-list');
+        const cartItemsList = document.getElementById('cart-items');
+        const placeOrderButton = document.getElementById('place-order');
+        const cancelOrderButton = document.getElementById('cancel-order');
+        const totalElement = document.getElementById('total');
+
+        cartItemsList.innerHTML = '';
+        cartItems.forEach(item => {
+            const li = document.createElement('li');
+            li.textContent = `${item.name} - $${item.price}`;
+            cartItemsList.appendChild(li);
+        });
+
+        totalElement.textContent = `Итог: $${totalPrice.toFixed(2)}`;
+        cartList.style.display = 'block';
+        placeOrderButton.style.display = 'block';
+        cancelOrderButton.style.display = 'block';
+    }
+
+    document.getElementById('place-order').addEventListener('click', function() {
+        document.getElementById('order-form').style.display = 'block';
+    });
+
+    document.getElementById('cancel-order').addEventListener('click', function() {
+        cartItems = [];
+        totalPrice = 0;
+        updateCart();
+        document.getElementById('order-form').style.display = 'none';
+    });
+
+    document.getElementById('submit-order').addEventListener('click', function() {
+        const email = document.getElementById('email').value;
+
+        if (email) {
+            let orderDetails = 'Здравствуйте, я бы хотел:\n';
+            cartItems.forEach(item => {
+                orderDetails += `- ${item.name} за $${item.price}\n`;
+            });
+            orderDetails += 'Пожалуйста, свяжитесь со мной в ближайшее время.';
+
+            const mailtoLink = `mailto:sdovasadov@gmail.com?subject=New Order&body=${encodeURIComponent(orderDetails)}&cc=${encodeURIComponent(email)}`;
+            window.location.href = mailtoLink;
+        } else {
+            alert('Пожалуйста, введите ваш Gmail.');
+        }
+    });
+</script>
+
+</body>
+</html>
